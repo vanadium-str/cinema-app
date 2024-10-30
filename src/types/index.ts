@@ -1,7 +1,7 @@
-export type FetchState = {
-  data?: FetchResponse;
+export type FetchState<T> = {
+  data?: T;
   loading: boolean;
-  error: boolean | string;
+  error?: string;
 }
 
 export type FetchResponse = {
@@ -14,4 +14,6 @@ export type Movie = {
   Title: string;
   Year: string;
   Poster: string;
+  Runtime: string;
+  Plot: string;
 }
