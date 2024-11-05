@@ -19,6 +19,12 @@ const HomePage = () => {
     setInputValue(event.target.value);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+        fetchData();
+    }
+};
+
   const renderContent = () => {
     if (fetchState.loading) {
       return <Loading />;
@@ -42,6 +48,7 @@ const HomePage = () => {
             type="text"
             placeholder="Search by movie title..."
             value={inputValue}
+            onKeyDown={handleKeyDown}
             onChange={handleInputChange}
           />
           <button className="bg-lime-600 px-3 py-2 rounded text-white" onClick={fetchData}>

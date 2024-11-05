@@ -3,6 +3,7 @@ import useFetch from '../../hooks/useFetch';
 import { Movie } from '../../types';
 import Loading from '../Loading';
 import Error from '../Error';
+import FavoriteButton from '../FavoriteButton';
 
 const url = import.meta.env.VITE_MOVIES_API;
 const apiKey = import.meta.env.VITE_MOVIES_API_KEY;
@@ -47,6 +48,7 @@ const Modal = (props: Props) => {
             <p className='mt-2'>{fetchState.data?.Runtime}</p>
             <p className="text-gray-600">{fetchState.data?.Year}</p>
             <p className="mt-3">{fetchState.data?.Plot}</p>
+            <FavoriteButton className='mt-4' />
           </div>
         </>
       );
