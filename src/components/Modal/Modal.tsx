@@ -48,7 +48,7 @@ const Modal = (props: Props) => {
             <p className='mt-2'>{fetchState.data?.Runtime}</p>
             <p className="text-gray-600">{fetchState.data?.Year}</p>
             <p className="mt-3">{fetchState.data?.Plot}</p>
-            <FavoriteButton className='mt-4' />
+            <FavoriteButton className='mt-4' movie={fetchState.data} />
           </div>
         </>
       );

@@ -1,21 +1,33 @@
-import { useState } from 'react';
+import { RootState } from "../../redux/store";
+import { useSelector, useDispatch } from 'react-redux';
+import { Movie } from "../../types";
+import { toggleFavorite } from "../../redux/reducers/favoriteMoviesSlice";
+import { selectIsFavorite } from "../../redux/selectors/favoritesMoviesSelectors";
 
 type Props = {
   className?: string;
-}
+  movie: Movie;
+};
 
 const FavoriteButton = (props: Props) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { className, movie } = props;
+  const dispatch = useDispatch();
 
-  const toggleFavorite = () => {
-    setIsFavorite((prev) => !prev);
+  const isFavorite = useSelector((state: RootState) =>
+    selectIsFavorite(state, movie.imdbID)
+  );
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(movie));
   };
 
   return (
     <button
-      className={`${props.className} flex items-center justify-center w-12 h-12 transition duration-300 
-        rounded-full focus:outline-none hover:bg-lime-600 ${isFavorite ? 'bg-lime-600' : 'bg-slate-100'}`}
-      onClick={toggleFavorite}
+      className={`${className} flex items-center justify-center w-12 h-12 transition duration-300 
+        rounded-full focus:outline-none hover:bg-lime-600 ${
+          isFavorite ? 'bg-lime-600' : 'bg-slate-100'
+        }`}
+      onClick={handleToggleFavorite}
     >
       <svg
         className={`w-6 h-6 hover:text-white ${isFavorite ? 'text-white' : 'text-lime-600'}`}
