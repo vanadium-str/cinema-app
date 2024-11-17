@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useFetch from '../../hooks/useFetch';
 import { Movie } from '../../types';
 import Loading from '../Loading';
 import Error from '../Error';
 import FavoriteButton from '../FavoriteButton';
+import FullPlot from '../FullPlot';
 
 const url = import.meta.env.VITE_MOVIES_API;
 const apiKey = import.meta.env.VITE_MOVIES_API_KEY;
@@ -15,6 +16,7 @@ type Props = {
 
 const Modal = (props: Props) => {
   const { fetchState, fetchData } = useFetch<Movie>(`${url}?apikey=${apiKey}&i=${props.imdbID}`);
+  const [isFullPlot, setIsFullPlot] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -47,13 +49,27 @@ const Modal = (props: Props) => {
             <h3 className="text-lg font-semibold">{fetchState.data?.Title}</h3>
             <p className='mt-2'>{fetchState.data?.Runtime}</p>
             <p className="text-gray-600">{fetchState.data?.Year}</p>
-            <p className="mt-3">{fetchState.data?.Plot}</p>
+            {isFullPlot ? (
+              <FullPlot imdbID={props.imdbID} />
+            ) : (
+              <p className="mt-3">{fetchState.data?.Plot}</p>
+            )}
+            <p
+              className="mt-3 text-sm underline text-slate-700 cursor-pointer"
+              onClick={handleClickFullPlot}
+            >
+              {isFullPlot ? 'Hide' : 'Show'} a full plot
+            </p>
             <FavoriteButton className='mt-4' movie={fetchState.data} />
           </div>
         </>
       );
     }
   };
+
+  const handleClickFullPlot = () => {
+    setIsFullPlot((prevState) => !prevState);
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
