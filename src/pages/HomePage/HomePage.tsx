@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import useFetch from '../../hooks/useFetch';
@@ -8,16 +8,25 @@ import { FetchResponse } from '../../types';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import FavoritesSideBar from '../../components/FavoritesSideBar';
+import Pagination from '../../components/Pagination';
 
 const url = import.meta.env.VITE_MOVIES_API;
 const apiKey = import.meta.env.VITE_MOVIES_API_KEY;
 
 const HomePage = () => {
   const [inputValue, setInputValue] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { fetchState, fetchData } = useFetch<FetchResponse>(
-    `${url}?apikey=${apiKey}&s=${inputValue}`
+    `${url}?apikey=${apiKey}&s=${inputValue}&page=${currentPage}`
   );
   const favoriteMovies = useSelector((state: RootState) => state.favorites);
+  const totalPages = fetchState.data?.totalResults
+    ? Math.floor(+fetchState.data.totalResults / 10)
+    : 1;
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -37,8 +46,30 @@ const HomePage = () => {
       return <Error error={fetchState.error} />;
     }
     if (fetchState.data?.Search) {
-      return <MovieList movies={fetchState.data.Search} />;
+      return (
+        <>
+          <MovieList movies={fetchState.data.Search} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            goToPage={goToPage}
+          />
+        </>
+      );
     }
+  };
+
+  const goToPage = (page: number | string) => {
+    if (page === '...') return;
+    setCurrentPage(+page);
+  };
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+  const goToPreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   return (
