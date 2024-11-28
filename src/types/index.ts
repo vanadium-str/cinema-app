@@ -16,4 +16,6 @@ export type Movie = {
   Poster: string;
   Runtime: string;
   Plot: string;
+  Genre: string;
+  Director: string;
 }

@@ -5,6 +5,9 @@ import Loading from '../Loading';
 import Error from '../Error';
 import FavoriteButton from '../FavoriteButton';
 import FullPlot from '../FullPlot';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { selectIsFavorite } from '../../redux/selectors/favoritesMoviesSelectors';
 
 const url = import.meta.env.VITE_MOVIES_API;
 const apiKey = import.meta.env.VITE_MOVIES_API_KEY;
@@ -21,6 +24,10 @@ const Modal = (props: Props) => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const isFavorite = useSelector((state: RootState) =>
+    selectIsFavorite(state, props.imdbID)
+  );
 
   const renderContent = () => {
     if (fetchState.loading) {
@@ -47,7 +54,9 @@ const Modal = (props: Props) => {
           <img src={fetchState.data?.Poster} alt={fetchState.data?.Title} />
           <div className="ml-4">
             <h3 className="text-lg font-semibold">{fetchState.data?.Title}</h3>
-            <p className='mt-2'>{fetchState.data?.Runtime}</p>
+            <p className='mt-2'>{fetchState.data?.Genre}</p>
+            <p>Director: {fetchState.data?.Director}</p>
+            <p>{fetchState.data?.Runtime}</p>
             <p className="text-gray-600">{fetchState.data?.Year}</p>
             {isFullPlot ? (
               <FullPlot imdbID={props.imdbID} />
@@ -60,7 +69,12 @@ const Modal = (props: Props) => {
             >
               {isFullPlot ? 'Hide' : 'Show'} a full plot
             </p>
-            <FavoriteButton className='mt-4' movie={fetchState.data} />
+            <div className='flex justify-between items-center mt-4'>
+              <FavoriteButton movie={fetchState.data} />
+              <button className='px-4 py-2 border bg-lime-600 text-white'>
+                {isFavorite ? 'Edit' : 'Edit and add to favorites'}
+              </button>
+            </div>
           </div>
         </>
       );
